@@ -265,15 +265,10 @@ def call_pysar(custom_template, custom_template_file, flag_load_and_stop):
 
     # TODO: Change subprocess call to get back error code and send error code to logger
     logger.log(loglevel.DEBUG,'\n*************** running pysar ****************')
-    command = 'pysarApp.py ' + custom_template_file + ' --end load_data |& tee out_pysar.log'
-    out_file = 'out_pysar_load'
-    logger.log(loglevel.INFO, command)
-    messageRsmas.log(command)
-    command = '('+command+' | tee '+out_file+'.o) 3>&1 1>&2 2>&3 | tee '+out_file+'.e'
-    status = subprocess.Popen(command, shell=True).wait()
-    if status is not 0:
-        logger.log(loglevel.ERROR,'ERROR in pysarApp.py --end load_data')
-        raise Exception('ERROR in pysarApp.py --end load_data')
+    pysarApp_args =  custom_template_file + ' --end load_data |& tee out_pysar.log'
+    logger.log(loglevel.INFO, 'pysarApp.py ' + pysarApp_args)
+    messageRsmas.log('pysarApp.py ' + pysarApp_args)
+    pysar.pysarApp.main(pysarApp_args.split())
 
     if flag_load_and_stop:
         logger.log(loglevel.DEBUG,'Exit as planned after loading into pysar')
@@ -288,17 +283,11 @@ def call_pysar(custom_template, custom_template_file, flag_load_and_stop):
         if int(custom_template['cleanopt']) >= 3:
             _remove_directories(cleanlist[3])
 
-    command = 'pysarApp.py ' + custom_template_file
-    out_file = 'out_pysar'
-    logger.log(loglevel.INFO, command)
-    messageRsmas.log(command)
-    command = '('+command+' | tee '+out_file+'.o) 3>&1 1>&2 2>&3 | tee '+out_file+'.e'
-    messageRsmas.log(command)
-    status = subprocess.Popen(command, shell=True).wait()
-    if status is not 0:
-        logger.log(loglevel.ERROR,'ERROR in pysarApp.py')
-        raise Exception('ERROR in pysarApp.py')
-     
+    pysarApp_args = custom_template_file
+    logger.log(loglevel.INFO, 'pysarApp.py ' + pysarApp_args)
+    messageRsmas.log('pysarApp.py ' + pysarApp_args)
+    pysar.pysarApp.main(pysarApp_args.split())
+
     return None
         
 ##########################################################################
